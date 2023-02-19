@@ -1,0 +1,96 @@
+[
+    {
+      "first_name": "John",
+      "last_name": "Doe",
+      "middle_name": "Michael",
+      "phone_number": "1111111111",
+      "gender": "male",
+      "birthdate": "1998-01-01",
+      "level": "upp",
+      "points": 100
+    },
+    {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "phone_number": "2222222222",
+      "gender": "female",
+      "birthdate": "1997-02-02",
+      "level": "jhs",
+      "points": 200
+    },
+    {
+      "first_name": "Bob",
+      "last_name": "Smith",
+      "middle_name": "Edward",
+      "phone_number": "3333333333",
+      "gender": "male",
+      "birthdate": "1996-03-03",
+      "level": "shs",
+      "points": 300
+    },
+    {
+      "first_name": "Sarah",
+      "last_name": "Johnson",
+      "phone_number": "4444444444",
+      "gender": "female",
+      "birthdate": "1995-04-04",
+      "level": "upp",
+      "points": 400
+    },
+    {
+      "first_name": "Tom",
+      "last_name": "Williams",
+      "middle_name": "James",
+      "phone_number": "5555555555",
+      "gender": "male",
+      "birthdate": "1994-05-05",
+      "level": "jhs",
+      "points": 500
+    },
+    {
+      "first_name": "Emily",
+      "last_name": "Jones",
+      "phone_number": "6666666666",
+      "gender": "female",
+      "birthdate": "1993-06-06",
+      "level": "shs",
+      "points": 600
+    },
+    {
+      "first_name": "Michael",
+      "last_name": "Brown",
+      "middle_name": "David",
+      "phone_number": "7777777777",
+      "gender": "male",
+      "birthdate": "1992-07-07",
+      "level": "upp",
+      "points": 700
+    },
+    {
+      "first_name": "Jessica",
+      "last_name": "Davis",
+      "phone_number": "8888888888",
+      "gender": "female",
+      "birthdate": "1991-08-08",
+      "level": "jhs",
+      "points": 800
+    },
+    {
+      "first_name": "Daniel",
+      "last_name": "Miller",
+      "middle_name": "Robert",
+      "phone_number": "9999999999",
+      "gender": "male",
+      "birthdate": "1990-09-09",
+      "level": "shs",
+      "points": 900
+    },
+    {
+      "first_name": "Ashley",
+      "last_name": "Wilson",
+      "phone_number": "admin",
+      "birthdate": "1990-09-09",
+      "level": "jhs",
+      "password": "admin"
+    }]
+  
