@@ -1,13 +1,18 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
-from . import views
+from .views import (
+    UserProfileViewSet,
+    SchoolProfileViewSet,
+    CurriculumViewSet,
+    AssessmentViewSet,
+)
 
 router = DefaultRouter()
-router.register(r"users", views.UserProfileViewSet, basename="user")
-router.register(r"school", views.SchoolProfileViewSet, basename="school")
-router.register(r"curriculum", views.CurriculumViewSet, basename="curriculum")
-router.register(r"questions", views.QuestionViewSet, basename="questions")
+router.register(r"users", UserProfileViewSet, basename="users")
+router.register(r"schools", SchoolProfileViewSet, basename="schools")
+router.register(r"curriculums", CurriculumViewSet, basename="curriculums")
+router.register(r"assessments", AssessmentViewSet, basename="assessments")
 
 app_name = "api"
 
