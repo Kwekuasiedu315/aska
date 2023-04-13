@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Welcome to Askademy!</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Askademy is an educational app designed for students in grades 4 to 12.</p>
+                    <hr class="my-4">
+                    <p>Our app provides courses for students to learn, chat for students to interact, and enables users to compete with friends in a challenge, and the winner gets a cash prize.</p>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn More</a>
+                </div>
+            </div>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Courses</h5>
+                    <p class="card-text">Our app provides a wide range of courses to help students learn new skills and improve their knowledge in various subjects.</p>
+                    <a href="#" class="btn btn-primary">View Courses</a>
+                </div>
+            </div>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Chat</h5>
+                    <p class="card-text">Our app allows students to interact with each other and share their knowledge through chat rooms and discussion forums.</p>
+                    <a href="#" class="btn btn-primary">Join Chat</a>
+                </div>
+            </div>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Challenge</h5>
+                    <p class="card-text">Our app enables users to compete with friends in a challenge, and the winner gets a cash prize.</p>
+                    <a href="#" class="btn btn-primary">Join Challenge</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Events</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Math Quiz</a></li>
+                        <li><a href="#">Science Fair</a></li>
+                        <li><a href="#">Coding Challenge</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

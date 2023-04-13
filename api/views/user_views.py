@@ -10,7 +10,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from .permissions import UserProfilePermission
-from api.serializers.user_serializers import UserSerializer
+from api.serializers.user_serializers import UserSerializer, FriendshipSerializer
+from api.serializers.education_serializers import EducationHistorySerializer
 from api.models import Friendship, CustomUser, EducationHistory
 
 
@@ -19,6 +20,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [UserProfilePermission]
     serializer_class = UserSerializer
     lookup_field = "pk"
+
+    filter_backends = []
 
     def get_user_info(self, request, user):
         token, created = Token.objects.get_or_create(user=user)
@@ -57,9 +60,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == "friend_request":
-            return serializers.FriendshipSerializer
+            return FriendshipSerializer
         elif self.action == "add_education":
-            return serializers.EducationHistorySerializer
+            return EducationHistorySerializer
         return super().get_serializer_class()
 
     def get_queryset(self):

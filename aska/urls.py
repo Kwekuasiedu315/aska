@@ -4,6 +4,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path("", include("web.urls")),
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("select2/", include("django_select2.urls")),

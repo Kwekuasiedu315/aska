@@ -8,6 +8,7 @@ from api.models.education_models import (
     CHOICES,
 )
 
+
 class SchoolPictureSerializer(serializers.ModelSerializer):
     class Meta:
         fields = "__all__"

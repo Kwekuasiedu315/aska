@@ -1,4 +1,9 @@
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+
+
+class ReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS
 
 
 class UserProfilePermission(BasePermission):
@@ -26,3 +31,10 @@ class UserProfilePermission(BasePermission):
         elif view.action in ["change_password"]:
             return user.is_authenticated
         return True
+
+
+class CurriculumPermission(BasePermission):
+    def has_permission(self, request, view):
+        if view.action in ("lesson_questions", "questions"):
+            return True
+        return bool(request.method in SAFE_METHODS)

@@ -16,7 +16,7 @@ class AssessmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         if self.action in ["multiple_choices", "multiple_choices_detail"]:
-            queryset = queryset.filter(question_type="mc")
+            return queryset.filter(question_type="mc")
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
@@ -26,18 +26,16 @@ class AssessmentViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get", "post"])
     def multiple_choices(self, *args, **kwargs):
-        queryset = self.get_queryset()
-        lizer = self.get_serializer(queryset, many=True)
-        return Response(lizer.data)
+        seriailizer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(seriailizer.data)
 
     @action(
         detail=False, methods=["get", "put"], url_path="multiple_choices/(?P<pk>\d+)"
     )
     def multiple_choices_detail(self, request, *args, **kwargs):
-        obj = self.get_object()
-        lizer = self.get_serializer(obj)
+        serializer = self.get_serializer(self.get_object())
         if request.method == "PUT":
-            lizer = self.get_serializer(data=request.data)
-            lizer.is_valid(raise_exception=True)
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
             answer = request.data.get("answer", None)
-        return Response(lizer.data)
+        return Response(serializer.data)

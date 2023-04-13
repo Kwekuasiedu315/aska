@@ -1,0 +1,681 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}{{user.full_name}}{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <div class="row">
+    <div class="col-md-5">
+      <!-- User Profile Picture and Name -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body text-center">
+          <img alt="Profile picture of {{user.full_name}}" src="{{ user.profile_picture.url }}" class="img-fluid mb-3"
+            width="128" height="110" style="background-color:lightskyblue" />
+          <h3 class="card-title">
+            {{ user.full_name }}
+            {% if user.nickname %}
+            ({{user.nickname}})
+            {%endif %}
+            {% if request.user == user %}
+            <button type="button" class="btn btn-sm bg-dark" data-toggle="modal" data-target="#edit-picture-and-name">
+              <i class="fa-solid fa-user-pen fa-beat text-primary"></i>
+            </button>
+            {% endif %}
+          </h3>
+          {% if user.school %}
+          <p class="card-text">{{ user.school.name }}</p>
+          {% endif %}
+          <hr />
+          <!-- User's Personal Info -->
+          <h3 class="shadow p-2 card-header">Personal info {% if request.user == user %}
+            <button type="button" class="btn btn-sm bg-dark" data-toggle="modal" data-target="#edit-personal-info">
+              <i class="fa-solid fa-user-pen fa-beat text-primary"></i>
+            </button>
+            {% endif %}
+          </h3>
+          <table class="table table-bordered shadow-sm">
+            <tbody>
+              <tr>
+                <th>Gender</th>
+                <td>{{ user.get_gender_display }}</td>
+              </tr>
+              <tr>
+                <th>Birthdate</th>
+                <td>{{ user.birthdate }}</td>
+              </tr>
+              {% if user.email %}
+              <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+              </tr>
+              {% endif %}
+              {% if user.phone_number %}
+              <tr>
+                <th>Phone Number</th>
+                <td>{{ user.phone_number }}</td>
+              </tr>
+              {% endif %}
+              {% if user.bio %}
+              <tr>
+                <th class="align-middle">Bio</th>
+                <td>{{ user.bio }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+          <!-- User's School Info -->
+          {% if user_has_school_info %}
+          <h3 class="shadow  p-2 card-header">School info {% if request.user == user %}
+            <button type="button" class="btn btn-sm bg-dark" data-toggle="modal" data-target="#edit-user-school-info">
+              <i class="fa-solid fa-user-pen fa-beat text-primary"></i>
+            </button>
+            {% endif %}
+          </h3>
+          <table class="table table-bordered shadow-sm">
+            <tbody>
+              {% if user.school %}
+              <tr>
+                <th>Current school</th>
+                <td>{{ user.school.name }}</td>
+              </tr>
+              {% endif %} {% if user.level %}
+              <tr>
+                <th>Level</th>
+                <td>{{ user.get_level_display }}</td>
+              </tr>
+              {% endif %} {% if user.subjects.all %}
+              <tr>
+                <th>Best subjects</th>
+                <td>
+                  <ul class="list-unstyled">
+                    {% for subject in user.subjects.all %}
+                    <li>
+                      <span>{{ subject.name }}</span>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+          {% else %}
+
+          {% endif %}
+          {% if user.education_history.all %}
+          <!-- User's Educational History -->
+          <h3 class="shadow card-header p-2">Educational history {% if request.user == user %}
+            <button type="button" class="btn btn-sm bg-dark" data-toggle="modal" data-target="#edit-picture-and-name">
+              <i class="fa-solid fa-user-pen fa-beat text-primary"></i>
+            </button>
+            {% endif %}
+          </h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th>School Name</th>
+                <th>Location</th>
+              </tr>
+              {% for education in user.education_history.all %}
+              <tr>
+                <td>{{education.school.name}}</td>
+                <td>{{ education.school.town }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% endif %}
+          <!-- User's Important Dates -->
+          <h3 class="shadow p-2 card-header">Important dates</h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th>Last Seen</th>
+                <td>{{ user.last_login }}</td>
+              </tr>
+              <tr>
+                <th>Date Joined</th>
+                <td>{{ user.date_joined }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-7">
+      <!-- Friends and mates navigation tabs -->
+      <div class="">
+        <ul class="nav nav-tabs elevation">
+          <li class="nav-item">
+            <a class="nav-link active" href="#friends" data-toggle="tab">Friends</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#level-mates" data-toggle="tab">Level mates</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#school-mates" data-toggle="tab">Level mates</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="friends">
+            <h1>Friends</h1>
+          </div>
+          <div class="tab-pane fade" id="level-mates">
+            <!-- User's friend lists -->
+            {% if friends %}
+            <div class="card mb-4 elevation">
+              <div class="card-header bg-white">
+                <h4 class="font-weight-bold text-muted mb-0 text-center">Level mates</h4>
+              </div>
+              <ul class="list-group list-group-flush">
+                {% for friend in friends|slice:":4" %}
+                <li class="list-group-item py-3">
+                  <div class="media">
+                    <img src="{{ user.profile_picture.url }}" alt="{{ friend.friend.username }}"
+                      class="mr-3 rounded-circle" height="60">
+                    <div class="media-body">
+                      <h5 class="mt-0 mb-1">{{ friend.friend.username }}</h5>
+                      <p class="text-muted mb-0">{{ friend.friend.email }}</p>
+                    </div>
+                    <div class="ml-auto">
+                      {% if friend.friend.status == "online" %}
+                      <span class="badge badge-success">Online</span>
+                      {% else %}
+                      <span class="badge badge-secondary">Offline</span>
+                      {% endif %}
+                      <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">Message</a>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+                {% if friends|length > 4 %}
+                <li class="list-group-item py-3">
+                  <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">See more</a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+          <div class="tab-pane fade" id="school-mates">
+            <!-- User's friend lists -->
+            {% if friends %}
+            <div class="card mb-4 elevation">
+              <div class="card-header bg-white">
+                <h4 class="font-weight-bold text-muted mb-0 text-center">Friends</h4>
+              </div>
+              <ul class="list-group list-group-flush">
+                {% for friend in friends|slice:":4" %}
+                <li class="list-group-item py-3">
+                  <div class="media">
+                    <img src="{{ user.profile_picture.url }}" alt="{{ friend.friend.username }}"
+                      class="mr-3 rounded-circle" height="60">
+                    <div class="media-body">
+                      <h5 class="mt-0 mb-1">{{ friend.friend.username }}</h5>
+                      <p class="text-muted mb-0">{{ friend.friend.email }}</p>
+                    </div>
+                    <div class="ml-auto">
+                      {% if friend.friend.status == "online" %}
+                      <span class="badge badge-success">Online</span>
+                      {% else %}
+                      <span class="badge badge-secondary">Offline</span>
+                      {% endif %}
+                      <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">Message</a>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+                {% if friends|length > 4 %}
+                <li class="list-group-item py-3">
+                  <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">See more</a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- User's posts -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h1 class="card-title text-center">Posts by {{user.full_name}}</h5>
+            {% for post in posts %}
+            <div class="card border-1 shadow mb-4">
+              <div class="card-header text-black rounded-top">
+                <div class="media align-items-center">
+                  <img src="{{post.author.profile_picture.url}}" height="50" width="50" class="rounded-circle mr-3"
+                    alt="Author picture">
+                  <div class="media-body">
+                    <h5 class="mb-0">{{post.author.full_name}}</h5>
+                    <p class="text-muted mb-0">{{post.timestamp}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="card-text lead">{{post.content}}</p>
+                <!-- Image Attach to the post -->
+                {% if post.image %}
+                <img src="{{post.image}}" class="img-fluid mb-3" alt="Attached image to the post">
+                {% endif %}
+                <!-- Post Controls -->
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <button type="button" class="btn btn-primary btn-icon mb-2">
+                      <i class="far fa-share-square"></i> Share
+                    </button>
+                    <button type="button" class="btn btn-primary btn-icon mr-3 mb-2">
+                      <i class="far fa-thumbs-up"></i> Likes (10)
+                    </button>
+                    <button type="button" class="btn btn-primary btn-icon mr-3 mb-2" data-toggle="collapse"
+                      data-target="#commentSection" aria-expanded="false" aria-controls="commentSection">
+                      <i class="far fa-comment"></i> Comments (10)
+                    </button>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-light btn-icon mb-2" data-toggle="modal"
+                      data-target="#reportModal">
+                      <i class="far fa-flag"></i> Report
+                    </button>
+                  </div>
+                </div>
+                <!-- Comment Section -->
+                <div class="collapse" id="commentSection">
+                  <div class="card border-1 shadow-sm mt-3">
+                    <div class="card-header text-black-100 rounded-top">
+                      <h5 class="mb-0">Comments</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="comment-list">
+                        <!-- Indivdual Comment -->
+                        {% for comment in post.comments %}
+                        <div class="media mb-4">
+                          <img src="{{comment.author.profile_picture.url}}" height="40" class="rounded-circle mr-3"
+                            alt="...">
+                          <div class="media-body">
+                            <h5 class="mt-0">{{comment.author.full_name}}</h5>
+                            <p class="mb-0">{{comment.content}}</p>
+                            <p class="text-muted mb-0">{{comment.timestamp}}</p>
+                            <div class="d-flex align-items-center mt-2">
+                              <a href="#" class="text-muted mr-3"><i class="fas fa-reply"></i> Reply</a>
+                              <a href="#" class="text-muted"><i class="fas fa-eye"></i> See Replies</a>
+                              <a href="#" class="text-muted ml-3"><i class="fas fa-flag"></i> Report</a>
+                            </div>
+                            <div class="reply-list">
+                              <!-- Replies section -->
+                              {% for reply in comment.replies %}
+                              <div class="media mt-3">
+                                <img src="{{reply.author.profile_picture.url}}" height="30" class="rounded-circle mr-3"
+                                  alt="...">
+                                <div class="media-body">
+                                  <h5 class="mt-0">{{reply.author.full_name}}</h5>
+                                  <p class="mb-0">{{reply.content}}</p>
+                                  <p class="text-muted mb-0">{{reply.timestamp}}</p>
+                                  <div class="d-flex align-items-center mt-2">
+                                    <a href="#" class="text-muted mr-4"><i class="fas fa-reply"></i> Reply</a>
+                                    <a href="#" class="text-muted"><i class="fas fa-flag"></i> Report</a>
+                                  </div>
+                                </div>
+                              </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      <button type="button" class="btn btn-primary btn-block mt-3" data-toggle="modal"
+                        data-target="#commentModal">
+                        Add Comment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comment Modal -->
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form class="comment-form">
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label for="comment-name" class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" id="comment-name" name="name" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="comment-message" class="col-form-label">Comment:</label>
+                        <textarea class="form-control" id="comment-message" name="message" rows="3" required></textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Report Modal -->
+            <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="reportModalLabel">Report This Post</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Please tell us why you're reporting this post:</p>
+                    <div class="form-group">
+                      <textarea class="form-control" rows="3" placeholder="Enter your reason"></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Report</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+
+      <!-- User's Recent Activity -->
+      <div class="row my-4">
+        <div class="col-md-12">
+          <h5>Recent Activity:</h5>
+          <ul class="list-unstyled">
+            {% for activity in user.recent_activity %}
+            <li>{{ activity }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile picture and name model -->
+<div class="modal fade" id="edit-picture-and-name" tabindex="-1" aria-labelledby="editProfileModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Change Profile Picture and Names</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group d-flex justify-content-center">
+            <div class="col-md-5 text-center">
+              <img id="preview" src="{{ user.profile_picture.url }}" alt="Current Profile Picture"
+                style="max-width: 200px; max-height: 200px;" class="mx-auto">
+            </div>
+            <div class="col-md-7">
+              <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
+                <input type="file" class="form-control-file" id="profile_picture" onchange="previewFile()">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="first_name">First Name</label>
+              <input type="text" class="form-control" value="{{user.first_name}}" id="first_name">
+            </div>
+            <div class="form-group col-md-4">
+              <label for="middle_name">Middle Name</label>
+              <input type="text" class="form-control" value="{% if user.middle_name %}{{user.middle_name}} {% endif %}"
+                id="middle_name">
+            </div>
+            <div class="form-group col-md-4">
+              <label for="last_name">Last Name</label>
+              <input type="text" class="form-control" value="{{user.last_name}}" id="last_name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="nickname">Nickname</label>
+            <input type="text" class="form-control" value="{{user.nickname}}" id="nickname">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Perosonal Information Modal -->
+<div class="modal fade" id="edit-personal-info" tabindex="-1" role="dialog" aria-labelledby="personal-info-modal-title"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="personal-info-modal-title">Edit Personal Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="gender">Gender</label>
+              <input type="text" class="form-control" id="gender" name="gender" value="{{ user.get_gender_display }}"
+                readonly>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="birthdate">Birthdate</label>
+              <input type="text" class="form-control" id="birthdate" name="birthdate" value="{{ user.birthdate }}"
+                readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="phone_number">Phone Number</label>
+              <input type="text" class="form-control" id="phone_number" name="phone_number"
+                value="{{ user.phone_number }}" readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio }}</textarea>
+          </div>
+
+          <!-- Privacy settings -->
+          <h6>Privacy Settings:</h6>
+          <p class="text-muted">
+            <small>Note: Please check the corresponding checkbox if you want your gender, email, or birthdate to be
+              shown publicly. Otherwise, leave it unchecked to keep the information private.</small>
+          </p>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="public" id="gender_privacy" name="gender_privacy">
+            <label class="form-check-label" for="gender_privacy">
+              Gender
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="public" id="email_privacy" name="email_privacy">
+            <label class="form-check-label" for="email_privacy">
+              Email
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="public" id="phone_number_privacy"
+              name="phone_number_privacy">
+            <label class="form-check-label" for="phone_number_privacy">
+              Phone Number
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit user school information -->
+<div class="modal fade" id="edit-user-school-info" tabindex="-1" role="dialog" aria-labelledby="schoolModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="schoolModalLabel">School Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="schoolForm">
+        <div class="modal-body">
+          <!-- <div class="form-group">
+            <label for="currentSchool">Current School:</label>
+            <input type="text" class="form-control" id="currentSchool" placeholder="Search for your current school...">
+          </div> -->
+          <div class="form-group">
+            <label for="currentSchool">Current School:</label>
+            <div class="dropdown">
+              <input type="text" class="form-control" id="currentSchool"
+                placeholder="Search for your current school...">
+              <div id="currentSchoolDropdownMenu" class="dropdown-menu" aria-labelledby="currentSchool">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="level">Level:</label>
+            <select class="form-control" id="level">
+              <option value="Upper Primary">Upper Primary</option>
+              <option value="Junior High">Junior High</option>
+              <option value="Senior High">Senior High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subjects">Subjects:</label>
+            <select class="form-control" id="subjects" multiple>
+              <option value="Mathematics">Mathematics</option>
+              <option value="English">English</option>
+              <option value="Science">Science</option>
+              <option value="Social Studies">Social Studies</option>
+              <option value="ICT">ICT</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // JavaScript to handle the form submission
+  function previewFile() {
+    var preview = document.getElementById('preview');
+    var file = document.getElementById('profile_picture').files[0];
+    var reader = new FileReader();
+
+    reader.onloadend = function () {
+      preview.src = reader.result;
+    }
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = "#";
+    }
+  }
+
+  $(document).ready(function () {
+    $("#edit-profile-form").submit(function (event) {
+      // Prevent the form from submitting normally
+      event.preventDefault();
+
+      // Get the form data
+      var formData = new FormData(this);
+
+      // Send the form data to the server using AJAX
+      $.ajax({
+        url: "/edit-profile",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          // Handle the server response
+        },
+        error: function (xhr, status, error) {
+          // Handle errors
+        }
+      });
+    });
+  });
+
+
+  $('#currentSchool').on('input', function () {
+    $.ajax({
+      url: '/path/to/server-side/script',
+      type: 'POST',
+      dataType: 'json',
+      data: { search: $(this).val() },
+      success: function (data) {
+        var dropdownMenu = $('#currentSchoolDropdownMenu');
+        dropdownMenu.empty();
+        for (var i = 0; i < data.length; i++) {
+          dropdownMenu.append('<a class="dropdown-item" href="#">' + data[i] + '</a>');
+        }
+        dropdownMenu.show();
+      }
+    });
+  });
+
+</script>
+{% endblock %}
+{% block style %}
+
+<style>
+  .img-fluid {
+    max-height: 500px;
+    width: 100%;
+  }
+
+  .elevation {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn.btn-sm.bg-dark {
+    float: right;
+  }
+</style>
+{% endblock %}

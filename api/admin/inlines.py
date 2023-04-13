@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import SubStrand, Curriculum, LearningIndicator
+from api.models import SubStrand, Curriculum
 
 
 class CurriculumInline(admin.StackedInline):
@@ -13,6 +13,3 @@ class SubStrandInline(admin.StackedInline):
     model = SubStrand
 
 
-class LearningIndicatorInline(admin.StackedInline):
-    extra = 1
-    model = LearningIndicator

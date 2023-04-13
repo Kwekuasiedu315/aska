@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %} Register {% endblock %}
+{% block content %}
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header bg-white text-center">
+          <img
+            src="{% static 'images/log.svg' %}"
+            alt="Facebook logo"
+            class="img-fluid"
+            width="70"
+          />
+          <h2 class="mt-2">Create Askademy account</h2>
+        </div>
+        <div class="card-body">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                {{ form.phone_number|as_crispy_field }}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                {{ form.first_name|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4">
+                {{ form.middle_name|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4">
+                {{ form.last_name|as_crispy_field }}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{ form.gender|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-6">
+                {{ form.birthdate|as_crispy_field }}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{ form.password1|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-6">
+                {{ form.password2|as_crispy_field }}
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mb-4">
+              Sign Up
+            </button>
+            <hr class="my-4" />
+            <p class="text-center">
+              Already have an account?
+              <a href="{% url 'web:login' %}">Log in</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

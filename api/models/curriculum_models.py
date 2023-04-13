@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 GRADE_CHOICES = [
@@ -24,12 +25,12 @@ class Curriculum(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.id = f"{self.subject.name}-{self.grade}".lower().replace(" ", "-")
+        self.id = f"{self.grade}-{self.subject.name}".lower().replace(" ", "-")
         super().save(*args, **kwargs)
 
     @property
     def strands_url(self):
-        return reverse("api:curriculums-detail", kwargs={"curriculum": self.id})
+        return reverse("api:curriculums-detail", kwargs={"curriculum": self.pk})
 
     def __str__(self):
         return self.id
@@ -41,15 +42,11 @@ class Strand(models.Model):
     curriculum = models.ForeignKey(
         Curriculum, related_name="strands", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=225)
 
     def save(self, *args, **kwargs):
         self.id = f"{self.curriculum.id}.{self.number}"
         super().save(*args, **kwargs)
-
-    @property
-    def substrands_url(self):
-        return self.curriculum.strands_url + str(self.number) + "/"
 
     def __str__(self):
         return f"{self.curriculum.id} {self.name}"
@@ -67,84 +64,43 @@ class SubStrand(models.Model):
         self.id = f"{self.strand.id}.{self.number}"
         super().save(*args, **kwargs)
 
-    @property
-    def content_standards_url(self):
-        return self.strand.substrands_url + str(self.number) + "/"
-
     def __str__(self):
         return f"{self.strand.id} {self.name}"
 
 
-class ContentStandard(models.Model):
-    id = models.CharField(max_length=100, unique=True, primary_key=True, editable=False)
-    number = models.PositiveSmallIntegerField()
-    substrand = models.ForeignKey(
-        SubStrand, related_name="content_standards", on_delete=models.CASCADE
-    )
-    name = models.CharField(max_length=500)
-
-    def save(self, *args, **kwargs):
-        self.id = f"{self.substrand.id}.{self.number}"
-        super().save(*args, **kwargs)
-
-    @property
-    def learning_indicators_url(self):
-        return self.substrand.content_standards_url + str(self.number) + "/"
-
-    def __str__(self):
-        return f"{self.substrand.id} {self.name}"
-
-
-class LearningIndicator(models.Model):
-    id = models.CharField(max_length=100, unique=True, primary_key=True, editable=False)
-    number = models.PositiveSmallIntegerField()
-    content_standard = models.ForeignKey(
-        ContentStandard, related_name="learning_indicators", on_delete=models.CASCADE
-    )
-    name = models.CharField(max_length=500)
-
-    def save(self, *args, **kwargs):
-        self.id = f"{self.content_standard.id}.{self.number}"
-        super().save(*args, **kwargs)
-
-    @property
-    def lessons_url(self):
-        return self.content_standard.learning_indicators_url + str(self.number) + "/"
-
-    def __str__(self):
-        return f"{self.content_standard.id} {self.name}"
-
-
 class Lesson(models.Model):
-    id = models.CharField(max_length=100, unique=True, primary_key=True, editable=False)
-    number = models.PositiveSmallIntegerField()
-    curriculum = models.ForeignKey(
-        Curriculum, related_name="lessons", on_delete=models.CASCADE, editable=False
-    )
-    strand = models.ForeignKey(
-        Strand, related_name="lessons", on_delete=models.CASCADE, editable=False
-    )
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, editable=False)
+    grade = models.CharField(max_length=10, choices=GRADE_CHOICES, editable=False)
+    strand = models.ForeignKey(Strand, on_delete=models.CASCADE, editable=False)
     substrand = models.ForeignKey(
-        SubStrand, related_name="lessons", on_delete=models.CASCADE, editable=False
+        SubStrand, related_name="lessons", on_delete=models.CASCADE
     )
-    content_standard = models.ForeignKey(
-        ContentStandard,
-        related_name="lessons",
-        on_delete=models.CASCADE,
-        editable=False,
-    )
-    learning_indicator = models.ForeignKey(
-        LearningIndicator, related_name="lessons", on_delete=models.CASCADE
-    )
+    number = models.PositiveSmallIntegerField()
     topic = models.CharField(max_length=1024)
     content = models.TextField()
+    slug = models.SlugField(unique=True, editable=False)
+
+    @property
+    def url(self):
+        return reverse(
+            "api:curriculums-lesson",
+            kwargs={
+                "curriculum": self.strand.curriculum.id,
+                "lesson": self.slug,
+            },
+        )
 
     def __str__(self):
-        return f"{self.learning_indicator} {self.topic}"
+        return f"{self.substrand.id} {self.topic}"
 
     def save(self, *args, **kwargs):
-        self.content_standard = self.learning_indicator.content_standard
-        self.substrand = self.content_standard.substrand
         self.strand = self.substrand.strand
-        self.curriculum = self.strand.curriculum
+        self.grade = self.strand.curriculum.grade
+        self.subject = self.strand.curriculum.subject
+        self.slug = slugify(
+            f"{self.strand.number}-{self.substrand.number}-{self.number}-{self.topic}"
+        )
         super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ["number", "subject", "grade"]

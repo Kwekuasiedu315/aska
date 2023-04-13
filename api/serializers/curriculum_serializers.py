@@ -4,14 +4,64 @@ from api.models.curriculum_models import (
     Curriculum,
     Strand,
     SubStrand,
-    ContentStandard,
-    LearningIndicator,
     Lesson,
 )
 
 
+class LessonSerializer(serializers.ModelSerializer):
+    subject = serializers.CharField(source="subject.name")
+    strand = serializers.CharField(source="strand.name")
+    substrand = serializers.CharField(source="substrand.name")
+    url = serializers.SerializerMethodField()
+
+    def get_url(self, instance):
+        abs_url = self.context["request"].build_absolute_uri
+        return abs_url(instance.url)
+
+    def get_fields(self):
+        fields = super().get_fields()
+        action = self.context["view"].action
+        view_obj = self.context["view"].get_queryset().first()
+        if not isinstance(view_obj, Lesson):
+            new_fields = {}
+            new_fields["topic"] = fields.pop("topic")
+            new_fields["url"] = fields.pop("url")
+            fields = new_fields
+        return fields
+
+    class Meta:
+        model = Lesson
+        fields = [
+            "number",
+            "grade",
+            "subject",
+            "strand",
+            "substrand",
+            "topic",
+            "content",
+            "url",
+        ]
+
+
+class SubstrandSerializer(serializers.ModelSerializer):
+    lessons = LessonSerializer(many=True)
+
+    class Meta:
+        model = SubStrand
+        fields = ["number", "name", "lessons"]
+
+
+class StrandSerializer(serializers.ModelSerializer):
+    substrands = SubstrandSerializer(many=True)
+
+    class Meta:
+        model = Strand
+        fields = ["number", "name", "substrands"]
+
+
 class CurriculumSerializer(serializers.ModelSerializer):
     strands = serializers.SerializerMethodField()
+    subject = serializers.CharField(source="subject.name")
 
     def get_strands(self, instance):
         abs_url = self.context["request"].build_absolute_uri
@@ -20,57 +70,3 @@ class CurriculumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curriculum
         fields = ["id", "grade", "subject", "strands"]
-
-
-class StrandSerializer(serializers.ModelSerializer):
-    substrands = serializers.SerializerMethodField()
-
-    def get_substrands(self, instance):
-        abs_url = self.context["request"].build_absolute_uri
-        return abs_url(instance.substrands_url)
-
-    class Meta:
-        model = Strand
-        fields = ["number", "name", "substrands"]
-
-
-class SubstrandSerializer(serializers.ModelSerializer):
-    content_standards = serializers.SerializerMethodField()
-
-    def get_content_standards(self, instance):
-        abs_url = self.context["request"].build_absolute_uri
-        return abs_url(instance.content_standards_url)
-
-    class Meta:
-        model = SubStrand
-        fields = ["number", "name", "content_standards"]
-
-
-class ContentStandardSerializer(serializers.ModelSerializer):
-    learning_indicators = serializers.SerializerMethodField()
-
-    def get_learning_indicators(self, instance):
-        abs_url = self.context["request"].build_absolute_uri
-        return abs_url(instance.learning_indicators_url)
-
-    class Meta:
-        model = ContentStandard
-        fields = ["number", "name", "learning_indicators"]
-
-
-class LearningInidicatorSerializer(serializers.ModelSerializer):
-    lessons = serializers.SerializerMethodField()
-
-    def get_lessons(self, instance):
-        abs_url = self.context["request"].build_absolute_uri
-        return abs_url(instance.lessons_url)
-
-    class Meta:
-        model = LearningIndicator
-        fields = ["number", "name", "lessons"]
-
-
-class LessonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lesson
-        fields = ["number", "topic", "content"]

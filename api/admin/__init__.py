@@ -22,11 +22,6 @@ class StrandAdmin(admin.ModelAdmin):
     inlines = [inlines.SubStrandInline]
 
 
-@admin.register(models.ContentStandard)
-class ContentSandard(admin.ModelAdmin):
-    inlines = [inlines.LearningIndicatorInline]
-
-
 @admin.register(models.District)
 class DistrictAdmin(admin.ModelAdmin):
     search_fields = ["name"]
@@ -55,4 +50,11 @@ class SchoolAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(models.Lesson)
+@admin.register(models.Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ["topic", "curriculum", "slug"]
+    list_display_links = ["slug"]
+
+    @admin.display()
+    def curriculum(self, instance):
+        return "%s %s" % (instance.grade, instance.subject)

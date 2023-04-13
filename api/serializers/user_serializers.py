@@ -123,24 +123,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FriendshipSerializer(serializers.ModelSerializer):
-    def get_user(self, friendship):
-        user = self.context["request"].user
-        if friendship.sender != user:
-            return friendship.sender
-        return friendship.receiver
+    user = serializers.cached_property(
+        lambda self: self.instance.receiver
+        if self.instance.sender == self.context["request"].user
+        else self.instance.sender
+    )
 
     def to_representation(self, instance):
-        user = self.get_user(friendship=instance)
         absolute_url = self.context["request"].build_absolute_uri
         return {
-            "username": user.full_name,
-            "sender": user == instance.receiver,
+            "username": self.user.full_name,
+            "sender": self.user == instance.receiver,
             "status": instance.status,
             "time": instance.timestamp,
-            "url": absolute_url(user.url),
-            "request_url": absolute_url(user.url) + "friend_request/",
+            "user_profile_url": absolute_url(self.user.url),
+            "request_url": absolute_url(self.user.url) + "friend_request/",
         }
 
     class Meta:
         model = Friendship
-        fields = []
+        fields = ["timestamp"]

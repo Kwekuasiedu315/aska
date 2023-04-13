@@ -4,8 +4,6 @@ from .curriculum_models import (
     Curriculum,
     Strand,
     SubStrand,
-    ContentStandard,
-    LearningIndicator,
     Lesson,
 )
 from .education_models import (

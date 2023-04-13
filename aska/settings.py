@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +30,7 @@ SECRET_KEY = "django-insecure-^svlu8ozwv5w6980gakrh8p!cfhxh6y$*^&pzzx)9^^nj63(%q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "kwekuasiedu315.pythonanywhere.com"]
+ALLOWED_HOSTS = ["127.0.0.1"] + os.getenv("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -39,12 +43,16 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third-party apps
+    "crispy_forms",
+    "crispy_bootstrap4",
     "django_select2",
     "rest_framework",
     "django_filters",
     "rest_framework.authtoken",
+    "fontawesomefree",
     # Installed apps
     "api",
+    "web",
 ]
 
 MIDDLEWARE = [
@@ -138,3 +146,20 @@ AUTH_USER_MODEL = "api.CustomUser"
 # media files
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_CLASS_CONVERTERS = {
+    "textinput": "form-control",
+    "passwordinput": "form-control",
+    "checkboxinput": "form-check-input",
+    "radioinput": "form-check-input",
+}
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")

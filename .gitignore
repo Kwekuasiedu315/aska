@@ -16,3 +16,7 @@ __pycache__/
 *.pyw
 *.egg-info/
 venv/
+
+
+# Personal files
+dummies

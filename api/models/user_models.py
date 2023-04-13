@@ -2,8 +2,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 import random
+from django.core.files import File
 
-from api.managers import CustomUserManager
+from .managers import CustomUserManager
+from api.utils import create_text_image
 
 GENDER_CHOICES = [
     ("M", "Male"),
@@ -49,8 +51,21 @@ class CustomUser(AbstractUser):
     subjects = models.ManyToManyField("api.Subject", related_name="users", blank=True)
     points = models.IntegerField(default=0)
     password_reset_code = models.CharField(editable=False, null=True, max_length=100)
-    profile_picture = models.ImageField(upload_to="users", default="defaults/user.png")
-    cover_picture = models.ImageField(upload_to="users", default="defaults/cover.jpeg")
+    profile_picture = models.ImageField(upload_to="users", blank=True, null=True)
+    cover_picture = models.ImageField(upload_to="users", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.profile_picture:
+            # Generate profile picture using user's initials
+            initials = self.first_name[0] + self.last_name[0]
+            image_path = create_text_image(initials, 150, 150)
+
+            # Save generated image to profile_picture field
+            with open(image_path, "rb") as f:
+                file_name = f"{self.phone_number}.png"
+                self.profile_picture.save(file_name, File(f), save=False)
+
+        super().save(*args, **kwargs)
 
     USERNAME_FIELD = "phone_number"
 

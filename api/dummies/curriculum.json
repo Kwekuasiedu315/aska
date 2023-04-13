@@ -1,120 +1,19 @@
 [
     {
-        "grade": "9",
-        "subject": "English",
-        "aim": "To develop language proficiency skills.",
-        "philosophy": "Language is a tool for communication and self-expression.",
-        "strand": [
-            {
-                "number": 1,
-                "name": "Listening and Speaking",
-                "substrand": [
-                    {
-                        "number": 1,
-                        "name": "Interpersonal Communication",
-                        "content_standard": [
-                            {
-                                "number": 1,
-                                "name": "Demonstrate understanding of oral messages in different contexts",
-                                "learning_indicator": [
-                                    {
-                                        "number": 1,
-                                        "name": "Listen and comprehend spoken messages in different situations",
-                                        "lesson": [
-                                            {
-                                                "number": 1,
-                                                "topic": "Understanding oral messages",
-                                                "content": "Learn to identify the main idea and supporting details in oral messages."
-                                            },
-                                            {
-                                                "number": 2,
-                                                "topic": "Listening for specific information",
-                                                "content": "Practice listening for specific information in oral messages."
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "number": 2,
-                                        "name": "Demonstrate understanding of nonverbal cues in oral messages",
-                                        "lesson": [
-                                            {
-                                                "number": 1,
-                                                "topic": "Understanding nonverbal cues",
-                                                "content": "Learn to identify different types of nonverbal cues in oral messages."
-                                            },
-                                            {
-                                                "number": 2,
-                                                "topic": "Interpreting nonverbal cues",
-                                                "content": "Practice interpreting the meaning of nonverbal cues in oral messages."
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "grade": "7",
+        "grade": "B5",
         "subject": "Science",
-        "aim": "To develop scientific literacy and problem-solving skills.",
-        "philosophy": "Science is a way of understanding the natural world and our place in it.",
-        "strand": [
+        "strands":[
             {
                 "number": 1,
-                "name": "Life Science",
-                "substrand": [
+                "name": "DIVERSITY OF MATTER",
+                "substrands":[
                     {
                         "number": 1,
-                        "name": "Organisms and their environments",
-                        "content_standard": [
-                            {
-                                "number": 1,
-                                "name": "Describe the interactions between organisms and their environment",
-                                "learning_indicator": [
-                                    {
-                                        "number": 1,
-                                        "name": "Identify the physical and biotic factors that affect organisms",
-                                        "lesson": [
-                                            {
-                                                "number": 1,
-                                                "topic": "Physical factors",
-                                                "content": "Learn about the physical factors that affect organisms, such as light, temperature, and water."
-                                            },
-                                            {
-                                                "number": 2,
-                                                "topic": "Biotic factors",
-                                                "content": "Learn about the biotic factors that affect organisms, such as competition, predation, and symbiosis."
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "number": 2,
-                                        "name": "Explain how organisms adapt to their environment",
-                                        "lesson": [
-                                            {
-                                                "number": 1,
-                                                "topic": "Types of adaptation",
-                                                "content": "Learn about the different types of adaptations that organisms can have, such as structural, behavioral, and physiological adaptations."
-                                            },
-                                            {
-                                                "number": 2,
-                                                "topic": "Adaptation examples",
-                                                "content": "Explore examples of adaptations in different organisms."
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
+                        "name": "Living and non-living things",
+                        
                     }
                 ]
-            }
+        }
         ]
     }
-    
-    
 ]

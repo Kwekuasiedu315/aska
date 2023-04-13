@@ -1,0 +1,3 @@
+from .user_serializers import UserSerializer, FriendshipSerializer
+from .curriculum_serializers import LessonSerializer
+from .education_serializers import SchoolSerializer
